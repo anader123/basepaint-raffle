@@ -2,6 +2,8 @@ import { WagmiConfig, createConfig } from "wagmi";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
 import { Home } from "./pages/Home";
+import { Mint } from "./pages/Mint";
+import { Raffle } from "./pages/Raffle";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { baseSepolia } from "wagmi/chains";
 
@@ -27,8 +29,8 @@ export const App = () => {
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} /> */}
+            <Route path="/mint" element={<Mint />} />
+            <Route path="/raffle" element={<Raffle />} />
           </Routes>
         </Router>
       </ConnectKitProvider>
