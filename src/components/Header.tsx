@@ -20,7 +20,11 @@ export const Header = () => {
             <Link to="/raffle">Raffle</Link>
           </li>
         </ul>
-        <ConnectKitButton />
+
+        <div className="flex items-center gap-4">
+          <p className="text-white text-lg">Ticket Balance: 0 </p>
+          <ConnectKitButton />
+        </div>
       </nav>
     </header>
   );

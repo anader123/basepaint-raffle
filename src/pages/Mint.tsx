@@ -1,18 +1,22 @@
 import { Header } from "../components/Header";
+import tickets from "../imgs/tickets.png";
 
 export const Mint = () => {
   return (
     <div className="h-full w-full">
       <Header />
-      <div className="w-full text-center mt-8">
+      <div className="w-full text-center mt-8 flex flex-col items-center">
         <h1 className="text-white text-4xl">Buy Tickets</h1>
-        <p className="text-gray-400 mt-2 text-lg">
-          Buy tickets and win a brush for the day!
-        </p>
+
+        <img
+          className="border rounded-xl h-[400px] my-10"
+          src={tickets}
+          alt="ticket"
+        />
 
         <div className="flex flex-col items-center w-full mt-8">
           <div className="text-white flex flex-col justify-center items-between w-[40%] gap-2">
-            <div className="flex gap-8 justify-center">
+            <div className="flex gap-12 justify-center text-2xl">
               <button>-</button>
               <button>+</button>
             </div>
