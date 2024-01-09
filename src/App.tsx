@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { WagmiConfig, createConfig } from "wagmi";
+import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
-function App() {
+import { Home } from "./pages/Home";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { baseSepolia } from "wagmi/chains";
+
+const chains = [{ ...baseSepolia }];
+
+const config = createConfig(
+  getDefaultConfig({
+    alchemyId: process.env.ALCHEMY_ID, // or infuraId
+    walletConnectProjectId: process.env.WALLETCONNECT_PROJECT_ID as string,
+
+    appName: "BasePaint Raffle",
+    appDescription: "Buy tickets and win a brush for the day.",
+    // appUrl: "https://family.co", // your app's url
+    // appIcon: "https://family.co/logo.png", // your app's icon, no bigger than 1024x1024px (max. 1MB)
+    chains,
+  })
+);
+
+export const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <WagmiConfig config={config}>
+      <ConnectKitProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} /> */}
+          </Routes>
+        </Router>
+      </ConnectKitProvider>
+    </WagmiConfig>
   );
-}
-
-export default App;
+};
