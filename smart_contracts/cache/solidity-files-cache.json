@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/justsomeguy/Documents/basepaint-raffle/smart_contracts/contracts/BasePaintRaffle.sol": {
-      "lastModificationDate": 1704933406408,
-      "contentHash": "26d632a0988e4be432c0ecb11a28bb7e",
+      "lastModificationDate": 1704947883887,
+      "contentHash": "0663fe88da466ec894305493f2d3587e",
       "sourceName": "contracts/BasePaintRaffle.sol",
       "solcConfig": {
         "version": "0.8.19",

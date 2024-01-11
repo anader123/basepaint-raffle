@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: MIT
-// Author: @0xNader
+
+//    ___                  ___         _       __    ___         ___ ___ __    
+//   / _ ) ___ _ ___ ___  / _ \ ___ _ (_)___  / /_  / _ \ ___ _ / _// _// /___ 
+//  / _  |/ _ `/(_-</ -_)/ ___// _ `// // _ \/ __/ / , _// _ `// _// _// // -_)
+// /____/ \_,_//___/\__//_/    \_,_//_//_//_/\__/ /_/|_| \_,_//_/ /_/ /_/ \__/ 
+
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,7 +18,13 @@ interface BasePaint {
     function paint(uint256 day, uint256 tokenId, bytes calldata pixels) external;
 }
 
+/// @title BasePaint Raffle Contract
+/// @author 0xNader
+/// @notice Buy tickets and win a brush for the day
 contract BasePaintRaffle is ERC721A, Ownable {
+    using Strings for uint256;
+
+// *********** Errors *********** //
     error NotWinner();
     error AlreadyDrawn();
     error ZeroTicketAmount();
@@ -23,30 +34,38 @@ contract BasePaintRaffle is ERC721A, Ownable {
     error NonExistentToken();
     error InvalidDay();
 
-    using Strings for uint256;
-
+// *********** Variables *********** //
     BasePaint public immutable basePaint;
+    string public imageURI;
     uint256 public ticketPrice;
     uint256 public brushId;
-    string imageURI;
 
+    ///@notice Stores the winning raffle ticket
     mapping(uint256 => uint256) public winners;
+
+    /// @notice Stores if a winner has claimed their earnings
     mapping(uint256 => bool) public claimedEarnings;
 
+// *********** Events *********** //
     event TicketsPurchased(address recipent, uint256 amount, uint256 price);
     event TicketPriceUpdated(uint256 prevPrice, uint256 updatedPrice);
     event RaffleWinner(uint256 winningTokenId, uint256 day);
 
+// *********** Constructor *********** //
     constructor(
         address _basePaintAddress, 
         uint256 _brushId, 
+        uint256 _ticketPrice, 
         string memory _imageURI
     ) ERC721A("BasePaint Tickets", "BPT") {
         basePaint = BasePaint(_basePaintAddress);
         brushId = _brushId;
+        ticketPrice = _ticketPrice;
         imageURI = _imageURI;
     }
 
+// *********** Functions *********** //
+    /// @notice Starts the raffle, can only be called once a day
     function startRaffle() public {
         uint256 today = basePaint.today();
         if(winners[today] != 0) revert AlreadyDrawn();
@@ -58,6 +77,9 @@ contract BasePaintRaffle is ERC721A, Ownable {
         emit RaffleWinner(winningTokenId, today);
     }
 
+    /// @notice Stores if a winner has claimed their earnings
+    /// @param _recipient Address that recieves the tickets
+    /// @param _amount Number of tickets to purchase
     function buyTickets(address _recipient, uint256 _amount) external payable {
         if(_amount == 0) revert ZeroTicketAmount();
         if(msg.value != ticketPrice * _amount) revert IncorrectEthAmount();
@@ -67,6 +89,8 @@ contract BasePaintRaffle is ERC721A, Ownable {
         emit TicketsPurchased(_recipient, _amount, ticketPrice);
     }
 
+    /// @notice Raffle winner uses this function to paint
+    /// @param _pixels The target pixels paint
     function paint(bytes calldata _pixels) external payable {
         uint256 today = basePaint.today();
         uint256 winningTokenId = winners[today];
@@ -75,6 +99,8 @@ contract BasePaintRaffle is ERC721A, Ownable {
         basePaint.paint(today, brushId, _pixels);
     }
 
+    /// @notice Called by winner to withdraw earnings after painting mint is completed
+    /// @param _day The basepaint day
     function withdawEarnings(uint256 _day) external {
         if(claimedEarnings[_day]) revert AlreadyClaimed();
         if(_day >= basePaint.today()) revert InvalidDay();
@@ -96,6 +122,9 @@ contract BasePaintRaffle is ERC721A, Ownable {
         claimedEarnings[_day] = true;
     }
 
+    /// @notice Token Metadata getter
+    /// @param _tokenId the id of the token
+    /// @return metadata Encoded JSON metadata for a given token
     function tokenURI(uint256 _tokenId) public view virtual override returns (string memory) {
         if (!_exists(_tokenId)) revert NonExistentToken();
 
@@ -112,7 +141,14 @@ contract BasePaintRaffle is ERC721A, Ownable {
         ));
     }
 
-    // Admin Functions
+    /// @notice Override to start tokenIds at 1 instead of 0
+    function _startTokenId() internal pure override returns (uint256) {
+        return 1;
+    }
+
+// *********** Owner Functions *********** //
+    /// @notice Used by owner to update the ticket price
+    /// @param _newPrice The new price
     function updateTicketPrice(uint256 _newPrice) external onlyOwner {
         uint256 prevTicketPrice = ticketPrice;
         ticketPrice = _newPrice;
@@ -120,13 +156,10 @@ contract BasePaintRaffle is ERC721A, Ownable {
         emit TicketPriceUpdated(prevTicketPrice, _newPrice);
     }
 
+    /// @notice Used by owner to withdraw ETH from ticket sales
+    /// @param _recipient The address to withdraw to
     function withdrawTicketSales(address _recipient) external onlyOwner {
         (bool sent, ) = _recipient.call{value: address(this).balance}("");
         if(!sent) revert FailedToWithdraw();
-    }
-
-    // Override to make sure that tokenIds start 1 instead of 0
-    function _startTokenId() internal pure override returns (uint256) {
-        return 1;
     }
 }

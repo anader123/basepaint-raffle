@@ -1,8 +1,10 @@
 import hre from "hardhat";
+import { parseEther } from "viem";
 
 async function main() {
   const epochDuration = 86400;
   const brushId = 1;
+  const ticketPrice = parseEther("0.0026");
   const imageURI = "ipfs://QmSQKdPUdUu7x7kKYm51rLuTGiEvsPViTUy8CMXGGTwiph";
 
   const brush = await hre.viem.deployContract("BasePaintBrush");
@@ -17,6 +19,7 @@ async function main() {
   const raffle = await hre.viem.deployContract("BasePaintRaffle", [
     basepaint.address,
     brushId,
+    ticketPrice,
     imageURI,
   ]);
   console.log(`Raffle Contract deployed to ${raffle.address}`);
