@@ -17,7 +17,7 @@ export const deploymentAddresses: {
   basepaintRaffle: "0xe9e6c9336e6f2df3dc4e3c8b285dad2fe7a625e0",
 };
 
-export const startTime = "Jan-11-2024 10:55:46 AM PST";
+export const unixStartTime = 1704999346;
 
 export const abis = {
   raffle: [
@@ -55,6 +55,13 @@ export const abis = {
     {
       inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
       name: "winners",
+      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "totalSupply",
       outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
       stateMutability: "view",
       type: "function",

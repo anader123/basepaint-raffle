@@ -17,7 +17,7 @@ export const Home = () => {
           />
           <p className="text-gray-400 my-8 sm:text-lg text-md text-center">
             Buy tickets and win a brush for the day! BasePaint Raffle is a fun
-            event where users can buy ticket for the chance to paint with a
+            event where users can buy tickets for the chance to paint with a
             1000px brush for the day.
           </p>
         </div>
@@ -40,8 +40,7 @@ export const Home = () => {
         <div className="sm:w-[33%] w-[90%] text-center flex flex-col items-center">
           <h3 className="sm:text-xl text-lg font-bold">Paid for Painting 💸</h3>
           <p className="text-gray-400 text-sm">
-            More pixels equals more ETH from contributing for a day on
-            basepaint.
+            More pixels = more ETH for contributing to a day on basepaint.
           </p>
         </div>
       </div>

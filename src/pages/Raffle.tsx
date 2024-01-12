@@ -1,5 +1,6 @@
-import { Header } from "../components/Header";
 import { useEffect, useState } from "react";
+import { Header } from "../components/Header";
+import { Footer } from "../components/Footer";
 import raffleImg from "../imgs/raffle-img.png";
 import { BUTTON_CLASS } from "../constants/constants";
 import { abis } from "../constants/constants";
@@ -9,28 +10,23 @@ import {
   useContractWrite,
   usePrepareContractWrite,
   useChainId,
+  useWaitForTransaction,
 } from "wagmi";
+import { useToday } from "../hooks/useToday";
 
 export const Raffle = () => {
+  const today = useToday();
   const chainId = useChainId();
   const [isRaffleReady, setIsRaffleReady] = useState(true);
-
-  const dayData = useContractRead({
-    address: deploymentAddresses.basepaintCore,
-    abi: abis.basePaint,
-    functionName: "today",
-    chainId,
-  });
+  const [selectedWinner, setSelectedWinner] = useState(0);
 
   const winnerData = useContractRead({
     address: deploymentAddresses.basepaintRaffle,
     abi: abis.raffle,
     functionName: "winners",
-    args: [dayData.data],
+    args: [today],
     chainId,
   });
-
-  const day = Number(dayData.data);
 
   const prepare = usePrepareContractWrite({
     address: deploymentAddresses.basepaintRaffle,
@@ -41,10 +37,26 @@ export const Raffle = () => {
 
   const write = useContractWrite(prepare.config);
   const error = prepare.error || write.error;
+  const hash = write.data?.hash;
+
+  const tx = useWaitForTransaction({
+    hash,
+    confirmations: 1,
+    onSuccess: (x) => {
+      const logData = x.logs[0].data;
+      const winningTokenIdHex = logData.slice(0, 66);
+      const winningTokenId = parseInt(winningTokenIdHex, 16);
+      setSelectedWinner(winningTokenId);
+      setIsRaffleReady(false);
+    },
+  });
 
   useEffect(() => {
     if (Number(winnerData.data) !== 0) {
       setIsRaffleReady(false);
+      setSelectedWinner(Number(winnerData.data));
+    } else {
+      setIsRaffleReady(true);
     }
   }, [winnerData.data]);
 
@@ -52,22 +64,25 @@ export const Raffle = () => {
     <div>
       <Header />
       <div className="w-full text-center sm:mt-8 mt-4 flex flex-col items-center">
-        <h1 className="text-white text-4xl">Daily Raffle</h1>
+        <h1 className="text-white text-4xl">Daily Raffle for Day #{today}</h1>
 
         <div className="flex flex-col items-center my-4 sm:w-[40%] md:w-[30%] w-[90%]">
-          <p className="text-gray-400 mb-2 sm:text-md text-sm">
+          <p className="text-gray-400 mb-4 sm:text-md text-sm">
             Raffles take place every day and can be initiated by anyone. The
-            winner will be able to paint with 1000px brush for a day. You must
+            winner will be able to paint with a 1000px brush for a day. You can
             purchase tickets to enter the raffle.
           </p>
-          <p className="mt-4 text-xl text-gray-400">Current Day: #{day}</p>
-
           <img
             className="rounded-xl  border border-gray-600 border-2"
             src={raffleImg}
             alt="raffle-img"
           />
           <div className="my-6 text-white w-full">
+            {tx.isSuccess ? (
+              <p className="my-2">Winning Ticket #{selectedWinner} 🎉</p>
+            ) : (
+              <></>
+            )}
             {isRaffleReady ? (
               <div>
                 <button
@@ -88,16 +103,17 @@ export const Raffle = () => {
                 )}
               </div>
             ) : (
-              <RaffleDrawn />
+              <RaffleDrawn winner={selectedWinner} />
             )}
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
 
-const RaffleDrawn = () => {
+const RaffleDrawn = ({ winner }: { winner: number }) => {
   const [hoursLeft, setHoursLeft] = useState(0);
 
   useEffect(() => {
@@ -129,9 +145,11 @@ const RaffleDrawn = () => {
 
   return (
     <div>
-      <p className="mb-2">Raffle has been drawn for the day.</p>
+      <p className="mb-2">
+        Raffle has been drawn for the day. Winner Ticket #{winner}
+      </p>
       <button disabled={true} className={`${BUTTON_CLASS} w-full`}>
-        Opens in {hoursLeft} hours
+        Opens in {hoursLeft} Hours
       </button>
     </div>
   );
