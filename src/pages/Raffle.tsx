@@ -13,12 +13,14 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useToday } from "../hooks/useToday";
+import SuccessModal from "../components/SuccessModal";
 
 export const Raffle = () => {
   const today = useToday();
   const chainId = useChainId();
   const [isRaffleReady, setIsRaffleReady] = useState(true);
   const [selectedWinner, setSelectedWinner] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const winnerData = useContractRead({
     address: deploymentAddresses.basepaintRaffle,
@@ -48,6 +50,7 @@ export const Raffle = () => {
       const winningTokenId = parseInt(winningTokenIdHex, 16);
       setSelectedWinner(winningTokenId);
       setIsRaffleReady(false);
+      setIsModalOpen(true);
     },
   });
 
@@ -64,9 +67,9 @@ export const Raffle = () => {
     <div>
       <Header />
       <div className="w-full text-center sm:mt-8 mt-4 flex flex-col items-center">
-        <h1 className="text-white text-4xl">Daily Raffle for Day #{today}</h1>
+        <h1 className="text-white text-4xl">Daily Raffle: Day #{today}</h1>
 
-        <div className="flex flex-col items-center my-4 sm:w-[40%] md:w-[30%] w-[90%]">
+        <div className="flex flex-col items-center my-4 sm:w-[40%] md:w-[30%] w-[90%] gap-6">
           <p className="text-gray-400 mb-4 sm:text-md text-sm">
             Raffles take place every day and can be initiated by anyone. The
             winner will be able to paint with a 1000px brush for a day. You can
@@ -78,11 +81,12 @@ export const Raffle = () => {
             alt="raffle-img"
           />
           <div className="my-6 text-white w-full">
-            {tx.isSuccess ? (
-              <p className="my-2">Winning Ticket #{selectedWinner} 🎉</p>
-            ) : (
-              <></>
-            )}
+            <SuccessModal
+              isOpen={isModalOpen}
+              onRequestClose={() => setIsModalOpen(false)}
+              contentLabel={"Raffle Drawn"}
+              message={`Winning Ticket is TokenId #${selectedWinner} 🎉`}
+            />
             {isRaffleReady ? (
               <div>
                 <button
@@ -145,11 +149,11 @@ const RaffleDrawn = ({ winner }: { winner: number }) => {
 
   return (
     <div>
-      <p className="mb-2">
-        Raffle has been drawn for the day. Winner Ticket #{winner}
+      <p className="mb-4 sm:text-lg text-sm">
+        Raffle drawn for today. Winning Ticket is TokenId #{winner}
       </p>
-      <button disabled={true} className={`${BUTTON_CLASS} w-full`}>
-        Opens in {hoursLeft} Hours
+      <button disabled={true} className={`${BUTTON_CLASS} w-full bg-gray-700`}>
+        Next draw in {hoursLeft} hours
       </button>
     </div>
   );
