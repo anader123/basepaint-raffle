@@ -3,8 +3,7 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import raffleImg from "../imgs/raffle-img.png";
 import { BUTTON_CLASS } from "../constants/constants";
-import { abis } from "../constants/constants";
-import { deploymentAddresses } from "../constants/constants";
+import { abis, deploymentAddresses } from "../constants/constants";
 import {
   useContractRead,
   useContractWrite,
@@ -29,6 +28,8 @@ export const Raffle = () => {
     args: [today],
     chainId,
   });
+
+  const winningTokenId = Number(winnerData.data);
 
   const prepare = usePrepareContractWrite({
     address: deploymentAddresses.basepaintRaffle,
@@ -55,13 +56,13 @@ export const Raffle = () => {
   });
 
   useEffect(() => {
-    if (Number(winnerData.data) !== 0) {
+    if (winningTokenId !== 0) {
       setIsRaffleReady(false);
-      setSelectedWinner(Number(winnerData.data));
+      setSelectedWinner(winningTokenId);
     } else {
       setIsRaffleReady(true);
     }
-  }, [winnerData.data]);
+  }, [winningTokenId]);
 
   return (
     <div>

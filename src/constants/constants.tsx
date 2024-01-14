@@ -36,6 +36,13 @@ export const abis = {
       type: "function",
     },
     {
+      inputs: [{ internalType: "bytes", name: "_pixels", type: "bytes" }],
+      name: "paint",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+    {
       inputs: [
         { internalType: "address", name: "_recipient", type: "address" },
         { internalType: "uint256", name: "_amount", type: "uint256" },
@@ -66,12 +73,10 @@ export const abis = {
       stateMutability: "view",
       type: "function",
     },
-  ],
-  basePaint: [
     {
-      inputs: [],
-      name: "today",
-      outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+      inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
+      name: "ownerOf",
+      outputs: [{ internalType: "address", name: "", type: "address" }],
       stateMutability: "view",
       type: "function",
     },

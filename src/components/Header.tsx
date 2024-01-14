@@ -19,6 +19,9 @@ export const Header = () => {
           <li className="hover:opacity-[80%]">
             <Link to="/raffle">Raffle</Link>
           </li>
+          <li className="hover:opacity-[80%]">
+            <Link to="/paint">Paint</Link>
+          </li>
         </ul>
 
         <div className="flex items-center gap-4">
