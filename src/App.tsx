@@ -1,5 +1,5 @@
-import { WagmiConfig, createConfig } from "wagmi";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { WagmiConfig } from "wagmi";
+import { ConnectKitProvider } from "connectkit";
 import { config } from "./config";
 
 import { Home } from "./pages/Home";
