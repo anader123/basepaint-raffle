@@ -1,6 +1,6 @@
 ## BasePaint Raffle 🎟️
 
-Buy tickets and win a brush for the day!
+Buy tickets and win a brush for the day! [Deployed Website](https://anader123.github.io/basepaint-raffle/)
 
 BasePaint Raffle is built on top of [BasePaint](https://basepaint.xyz/), a shared onchain pixel canvas. BasePaint has ERC-721 brushes that allow painters to contribute a certain amount of pixels a day.
 
@@ -22,3 +22,10 @@ the number of pixels placed.
   basepaintBrush: 0x67303ec67f723c807fffaf796c2c489327d3c756,
   basepaintCore: 0xd1f0b838a0dc3a1a77cd2a4fb51a346aeccd2f5d,
 ```
+
+### Crypto Tech Used
+
+- ERC-721
+- Onchain Metadata Rendering
+- BasePaint Contracts
+- Wagmi/Viem
