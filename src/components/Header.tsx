@@ -6,13 +6,6 @@ export const Header = () => {
     <header className="p-2 bg-black ">
       <nav className="w-full flex flex-row justify-between items-center h-[50px]">
         <ul className="flex flex-row gap-4 text-white text-lg items-center h-min-[70px]">
-          <Link to="/">
-            <img
-              src="/basepaint-raffle.svg"
-              alt="basepaint-raffle-logo"
-              className="hover:opacity-[80%] w-[40px] rounded-full"
-            />
-          </Link>
           <li className="hover:opacity-[80%]">
             <Link to="/mint">Tickets</Link>
           </li>
