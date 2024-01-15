@@ -6,8 +6,9 @@ const chains = [{ ...baseSepolia }];
 
 export const config = createConfig(
   getDefaultConfig({
-    alchemyId: process.env.ALCHEMY_ID, // or infuraId
-    walletConnectProjectId: process.env.WALLETCONNECT_PROJECT_ID as string,
+    alchemyId: process.env.REACT_APP_ALCHEMY_ID, // or infuraId
+    walletConnectProjectId: process.env
+      .REACT_APP_WALLETCONNECT_PROJECT_ID as string,
 
     appName: "BasePaint Raffle",
     appDescription: "Buy tickets and win a brush for the day.",
